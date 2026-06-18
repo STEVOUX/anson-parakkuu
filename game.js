@@ -473,11 +473,43 @@
     }
 
     // ========================
-    // TOWER SYSTEM
-    // ========================
     let towers = [];
     let towerSpawnTimer = 0;
     let towerSpeed = CONFIG.TOWER_SPEED_BASE;
+
+    let offscreenTowerCanvas = null;
+
+    function createPreRenderedCylinder() {
+        const cylImg = assets.cylinder;
+        if (!cylImg) return null;
+
+        const tw = CONFIG.TOWER_W;
+        const ch = CONFIG.TOWER_CYLINDER_H;
+        const overlap = CONFIG.TOWER_OVERLAP;
+        const step = ch - overlap;
+        const crop = SPRITE_CROP.cylinder;
+
+        const maxH = Math.ceil(VIRTUAL_H / step) * step + ch;
+
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = tw;
+        offCanvas.height = maxH;
+        const offCtx = offCanvas.getContext('2d');
+
+        offCtx.globalAlpha = 0.95;
+
+        const count = Math.ceil(maxH / step) + 1;
+        for (let i = count - 1; i >= 0; i--) {
+            const cy = i * step;
+            const sx = cylImg.naturalWidth * crop.sx;
+            const sy = cylImg.naturalHeight * crop.sy;
+            const sw = cylImg.naturalWidth * crop.sw;
+            const sh = cylImg.naturalHeight * crop.sh;
+            offCtx.drawImage(cylImg, sx, sy, sw, sh, 0, cy, tw, ch);
+        }
+
+        return offCanvas;
+    }
 
     function resetTowers() {
         towers = [];
@@ -544,45 +576,37 @@
     }
 
     function drawTowers() {
-        const cylImg = assets.cylinder;
-        if (!cylImg) return;
+        if (!offscreenTowerCanvas) return;
 
         const tw = CONFIG.TOWER_W;
-        const ch = CONFIG.TOWER_CYLINDER_H;
-        const overlap = CONFIG.TOWER_OVERLAP;
-        const step = ch - overlap;
-        const crop = SPRITE_CROP.cylinder;
+        const maxH = offscreenTowerCanvas.height;
 
         towers.forEach(tower => {
             ctx.save();
-            ctx.globalAlpha = 0.8; // Blend into the background
             ctx.translate(0, tower.visualOffsetY);
             
             const left = tower.x - tw / 2;
 
-            // === BOTTOM TOWER: stack from gap downward ===
+            // === BOTTOM TOWER ===
             const botRegionH = CONFIG.GROUND_Y - tower.bottomStart;
             if (botRegionH > 0) {
-                const count = Math.ceil(botRegionH / step) + 1;
-                // Draw from bottom up to get the correct z-order overlap
-                for (let i = count - 1; i >= 0; i--) {
-                    const cy = tower.bottomStart + i * step;
-                    drawCroppedSprite(cylImg, crop, left, cy, tw, ch);
-                }
+                const drawH = Math.min(botRegionH, maxH);
+                ctx.drawImage(offscreenTowerCanvas, 
+                    0, 0, tw, drawH, 
+                    left, tower.bottomStart, tw, drawH);
             }
 
-            // === TOP TOWER: stack from gap upward (flipped) ===
+            // === TOP TOWER ===
             if (tower.topEnd > 0) {
-                const count = Math.ceil(tower.topEnd / step) + 1;
-                // Draw from top down to get the correct z-order overlap
-                for (let i = count - 1; i >= 0; i--) {
-                    const cy = tower.topEnd - ch - i * step;
-                    ctx.save();
-                    ctx.translate(left + tw / 2, cy + ch / 2);
-                    ctx.scale(1, -1);
-                    drawCroppedSprite(cylImg, crop, -tw / 2, -ch / 2, tw, ch);
-                    ctx.restore();
-                }
+                const drawH = Math.min(tower.topEnd, maxH);
+                
+                ctx.save();
+                ctx.translate(left + tw / 2, tower.topEnd / 2);
+                ctx.scale(1, -1);
+                ctx.drawImage(offscreenTowerCanvas, 
+                    0, 0, tw, drawH, 
+                    -tw / 2, -tower.topEnd / 2, tw, drawH);
+                ctx.restore();
             }
             
             ctx.restore();
@@ -716,14 +740,22 @@
 
     function drawParticles() {
         particles.forEach(p => {
-            ctx.save();
             ctx.globalAlpha = Math.max(0, p.life);
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.rotation * Math.PI / 180);
             ctx.fillStyle = p.color;
-            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-            ctx.restore();
+            
+            const cos = Math.cos(p.rotation * Math.PI / 180);
+            const sin = Math.sin(p.rotation * Math.PI / 180);
+            const hw = p.size / 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(p.x - hw * cos + hw * sin, p.y - hw * sin - hw * cos);
+            ctx.lineTo(p.x + hw * cos + hw * sin, p.y + hw * sin - hw * cos);
+            ctx.lineTo(p.x + hw * cos - hw * sin, p.y + hw * sin + hw * cos);
+            ctx.lineTo(p.x - hw * cos - hw * sin, p.y - hw * sin + hw * cos);
+            ctx.closePath();
+            ctx.fill();
         });
+        ctx.globalAlpha = 1.0;
     }
 
     // ========================
@@ -1247,6 +1279,7 @@
             }
 
             initClouds();
+            offscreenTowerCanvas = createPreRenderedCylinder();
             menuHighscore.textContent = highScore;
             setState(STATES.MENU);
             requestAnimationFrame(gameLoop);
