@@ -27,8 +27,11 @@
     };
 
     // ========================
+    // ========================
     // GAME CONFIG (% of virtual screen)
     // ========================
+    const isMobile = window.innerWidth <= 768;
+
     const CONFIG = {
         // Physics (tuned for Flappy Bird feel)
         GRAVITY: 0.30,
@@ -52,7 +55,7 @@
         TOWER_OVERLAP: 26,
 
         // Gap size remains constant
-        GAP_BASE: BASE_H * 0.25,    // 160
+        GAP_BASE: isMobile ? BASE_H * 0.20 : BASE_H * 0.25,    // 160
         GAP_VARIANCE: BASE_H * 0.02, // 12.8
         
         // Spawn zones and ground use dynamic VIRTUAL_H so they adapt to tall screens
@@ -64,10 +67,10 @@
         get GROUND_Y() { return VIRTUAL_H - this.GROUND_H; },
 
         // Towers movement
-        TOWER_SPEED_BASE: 2.6,
-        TOWER_SPEED_INCREMENT: 0.02,
-        TOWER_SPEED_MAX: 4.5,
-        TOWER_SPAWN_INTERVAL: 85,     // frames between spawns
+        TOWER_SPEED_BASE: isMobile ? 3.0 : 2.6,
+        TOWER_SPEED_INCREMENT: isMobile ? 0.025 : 0.02,
+        TOWER_SPEED_MAX: isMobile ? 5.0 : 4.5,
+        TOWER_SPAWN_INTERVAL: isMobile ? 70 : 85,     // frames between spawns
 
         // Background
         BG_SCROLL_SPEED: 0.5,
@@ -131,7 +134,7 @@
     const ctx = canvas.getContext('2d');
 
     let screenW, screenH, scale;
-    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
 
     function resizeGame() {
         const wW = window.innerWidth;
@@ -1228,14 +1231,8 @@
         // --- NIGHT LIGHTING OVERLAY ---
         nightAlpha += (targetNightAlpha - nightAlpha) * 0.015;
         if (nightAlpha > 0.01) {
-            // Darken everything heavily (simulates loss of sunlight)
-            ctx.globalCompositeOperation = 'multiply';
-            ctx.fillStyle = `rgba(10, 15, 30, ${nightAlpha * 0.8})`;
-            ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
-            
-            // Add a blue moonlight tint over everything
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = `rgba(20, 30, 80, ${nightAlpha * 0.35})`;
+            // Fast mobile-friendly night mode
+            ctx.fillStyle = `rgba(10, 15, 40, ${nightAlpha * 0.5})`;
             ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
         }
 
