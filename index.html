@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Play Anson Parakkuu, a funny flappy bird style game where Anson tries to fly and crashes into gas cylinders. Tap to play this hilarious browser game online for free.">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta property="og:title" content="Anson Parakkuu Game">
+    <meta property="og:description" content="Funny flying game">
+    <meta property="og:image" content="Assets/anson%20hit.png">
+    <meta property="og:type" content="website">
+    <title>Anson Parakkuu – Funny Flappy Bird Style Game | Play Anson Fly Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="Assets/anson%20smile.png">
+</head>
+<body>
+    <!-- Outer wrapper for centering 9:16 on desktop -->
+    <div id="game-wrapper">
+        <div id="game-container">
+            <!-- Game Canvas -->
+            <canvas id="game-canvas"></canvas>
+
+            <!-- Score Display (during gameplay) -->
+            <div id="score-display">0</div>
+
+            <!-- Flash Effect on Hit -->
+            <div id="flash-overlay"></div>
+            
+            <!-- Dynamic Blame Floating Text -->
+            <div id="blame-display" class="hidden"></div>
+
+            <!-- Get Ready Overlay -->
+            <div id="get-ready-overlay">
+                <div class="get-ready-text">Get Ready!</div>
+                <div class="tap-hint">Tap or press Space to fly</div>
+            </div>
+
+            <!-- Start Screen -->
+            <div id="start-screen" class="screen-overlay">
+                <img src="Assets/anson%20title.png" alt="funny flappy bird style game" class="title-image" id="title-img">
+                <img src="Assets/anson%20smile.png" alt="Anson flying funny game character" class="start-character" id="start-char">
+                <div class="subtitle">Tap to make Anson fly ✨</div>
+                <button class="btn-play" id="btn-play" type="button">Play</button>
+                <div class="high-score-display">Best: <span id="menu-highscore">0</span></div>
+                <div class="creator-credits">game made by <a href="https://github.com/STEVOUX/STEVOUX" target="_blank" rel="noopener noreferrer">STEVOUX</a></div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div id="gameover-screen" class="screen-overlay hidden">
+                <div id="gameover-title" class="gameover-title">Anson Crashed! 💀</div>
+                <div id="gameover-roast" class="gameover-roast"></div>
+                
+                <img src="Assets/anson%20hit.png" alt="Anson Parakkuu gameplay screenshot" class="gameover-character">
+                
+                <div class="score-container">
+                    <div class="score-row">
+                        <span class="score-label">SCORE</span>
+                        <span class="score-value" id="final-score">0</span>
+                    </div>
+                    <div class="score-row">
+                        <span class="score-label">BEST</span>
+                        <span class="score-value best" id="final-highscore">0</span>
+                    </div>
+                </div>
+                
+                <button class="btn-retry" id="btn-retry" type="button">Retry</button>
+                <button class="btn-home" id="btn-home" type="button">Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEO Content Section -->
+    <article class="seo-section">
+        <div class="seo-container">
+            <div class="play-now-container">
+                <a href="#game-wrapper" class="play-now-btn">Play Now</a>
+            </div>
+            
+            <h1>Anson Parakkuu – Funny Flying Game</h1>
+            <p><strong>Anson Parakkuu</strong> is a funny flappy bird style game where you control Anson Fly as he tries to fly through tricky obstacles. Whether you're playing on a mobile phone or a desktop browser, you'll experience a hilarious, fast-paced free online funny game full of funny crashes and relatable moments!</p>
+
+            <h2 id="play">Play Anson Fly Online</h2>
+            <p>To play this tap to fly game, simply click or tap the screen to make Anson jump. You can also use the Spacebar on your keyboard, or the 'A' button and Right Trigger (RT) on an Xbox Controller. It's an easy to learn, yet hard to master mobile web game that will test your reflexes!</p>
+            
+            <h2 id="features">Funny Flappy Bird Style Game</h2>
+            <p>Unlike a traditional flappy bird clone, this funny game features a dynamic comedy system! When you crash into the Bharatgas cylinder towers, the game will roast you with hilarious excuses based on exactly how you failed. Did you panic tap? Did you miss by a single pixel? The game knows!</p>
+
+            <h2>Features</h2>
+            <ul>
+                <li>Responsive 9:16 gameplay container optimized for mobile and desktop.</li>
+                <li>Dynamic day and night cycle that shifts as your score increases.</li>
+                <li>Context-aware blame system that makes fun of your crashes!</li>
+                <li>Full native Gamepad support with analog flap physics and dual-rumble vibrations.</li>
+            </ul>
+
+            <h2>Why This Game is Funny</h2>
+            <p>Every time you play game online with Anson, you're guaranteed a laugh. The physics are perfectly tuned to feel like a meme flying game, with a massive "yeet" effect when you hit a pipe, sending Anson spinning wildly out of control while floating text displays his comedic last words.</p>
+        </div>
+    </article>
+
+    <script src="game.js"></script>
+</body>
+</html>
