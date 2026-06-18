@@ -178,7 +178,7 @@
         { key: 'happy',    src: 'Assets/anson happy.png' },
         { key: 'hit',      src: 'Assets/anson hit.png' },
         { key: 'lip',      src: 'Assets/anson lip.png' },
-        { key: 'title',    src: 'Assets/anson title.png' },
+        { key: 'title',    src: 'Assets/anson-title.png' },
         { key: 'cylinder', src: 'Assets/bharathgas top.png' },
         { key: 'bg',       src: 'Assets/game_bg.png' },
     ];
