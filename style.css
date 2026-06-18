@@ -514,34 +514,6 @@ html, body {
     transition: opacity 0.01s;
 }
 
-/* ===== BLAME SYSTEM ===== */
-#blame-display {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    color: rgba(255, 255, 255, 0.85);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: clamp(12px, 3vmin, 16px);
-    font-weight: 500;
-    pointer-events: none;
-    z-index: 12;
-    white-space: nowrap;
-    opacity: 0;
-}
-
-#blame-display.show {
-    animation: blameFloat 1.5s ease-out forwards;
-}
-
-@keyframes blameFloat {
-    0% { transform: translate(-50%, 20px); opacity: 0; }
-    15% { transform: translate(-50%, 0); opacity: 1; }
-    85% { transform: translate(-50%, -10px); opacity: 1; }
-}
-
 /* ===== SEO CONTENT SECTION ===== */
 .seo-section {
     background: #111;

@@ -64,10 +64,10 @@
         get GROUND_Y() { return VIRTUAL_H - this.GROUND_H; },
 
         // Towers movement
-        TOWER_SPEED_BASE: 2.0,
-        TOWER_SPEED_INCREMENT: 0.018,
-        TOWER_SPEED_MAX: 3.5,
-        TOWER_SPAWN_INTERVAL: 105,     // frames between spawns
+        TOWER_SPEED_BASE: 2.6,
+        TOWER_SPEED_INCREMENT: 0.02,
+        TOWER_SPEED_MAX: 4.5,
+        TOWER_SPAWN_INTERVAL: 85,     // frames between spawns
 
         // Background
         BG_SCROLL_SPEED: 0.5,
@@ -399,22 +399,7 @@
             else player.sprite = 'smile';
         }
 
-        // Proximity panic effect
-        player.panicOffsetX = 0;
-        player.panicOffsetY = 0;
-        let closestDist = Infinity;
-        for (let t of towers) {
-            if (t.x + CONFIG.TOWER_W / 2 > player.x - PW) {
-                let d = Math.abs(t.x - player.x);
-                if (d < closestDist) closestDist = d;
-            }
-        }
-        if (closestDist < 60) {
-            if (player.spriteTimer <= 0) player.sprite = 'lip';
-            player.panicOffsetX = Math.random() * 4 - 2;
-            player.panicOffsetY = Math.random() * 4 - 2;
-            player.rotation += Math.random() * 6 - 3;
-        }
+        // Proximity panic effect removed
 
         // Rotation: direct velocity-based (responsive like Flappy Bird)
         // Clamp between flap angle and max fall angle
@@ -570,6 +555,7 @@
 
         towers.forEach(tower => {
             ctx.save();
+            ctx.globalAlpha = 0.8; // Blend into the background
             ctx.translate(0, tower.visualOffsetY);
             
             const left = tower.x - tw / 2;
@@ -852,60 +838,6 @@
         "ente doom", "bro lost"
     ];
 
-    const BLAME_LINES = [
-        "lag aayirunnu", "touch work aayilla", "screen slippery", "finger slip aayi",
-        "timing wrong aayi", "brain lag bro", "reaction late aayi", "phone heat aayi",
-        "fps drop bro", "screen freeze aayi", "wifi problem", "hand shake aayi",
-        "focus illa", "mind elsewhere", "distraction bro", "eye blink aayi",
-        "thumb pain bro", "battery low aayi", "control poyi", "timing miss aayi",
-        "tap register aayilla", "device issue bro", "skill illa 🤡", "practice illa",
-        "over confidence", "panic adichu", "thinking too much", "underestimate cheythu",
-        "game bug bro", "physics wrong", "gravity kooduthal", "hitbox problem",
-        "collision bug", "screen small", "display issue", "angle wrong",
-        "speed kooduthal", "brain off aayi", "attention poyi", "sleepy aayi",
-        "slow reaction", "bad luck bro", "daivam test 😭", "karma bro",
-        "destiny issue", "luck illa", "time bad aayi", "chance poyi",
-        "almost aayirunnu", "retry venam"
-    ];
-
-    let lastBlame = "";
-
-    function getBlameReason() {
-        const now = performance.now();
-        const timeSinceFlap = now - lastFlapTime;
-        let options = [];
-
-        let closestDist = Infinity;
-        for (let t of towers) {
-            if (t.x + CONFIG.TOWER_W / 2 > player.x - PW) {
-                let d = Math.abs(t.x - player.x);
-                if (d < closestDist) closestDist = d;
-            }
-        }
-        const isNearMiss = (closestDist < 40);
-
-        if (timeSinceFlap > 1500) {
-            options = ["brain off aayi", "focus illa", "attention poyi"];
-        } else if (recentFlapCount >= 3 && timeSinceFlap < 500) {
-            options = ["panic adichu", "control poyi", "thinking too much"];
-        } else if (isNearMiss) {
-            options = ["almost aayirunnu", "chance poyi", "timing miss aayi", "close aayi bro"];
-        } else if (score >= 10) {
-            options = ["bad luck bro", "almost aayirunnu", "chance poyi", "destiny issue"];
-        } else if (score >= 4) {
-            options = ["timing wrong aayi", "reaction late aayi", "panic adichu", "thinking too much"];
-        } else {
-            options = ["practice illa", "skill illa 🤡", "focus illa", "brain lag bro"];
-        }
-
-        options = options.filter(b => b !== lastBlame);
-        if (options.length === 0) options = BLAME_LINES.filter(b => b !== lastBlame);
-
-        const chosen = options[Math.floor(Math.random() * options.length)];
-        lastBlame = chosen;
-        return chosen;
-    }
-
     let lastDeathType = 'general';
 
     function triggerGameOver(type) {
@@ -920,14 +852,6 @@
         player.lastWord = LAST_WORDS[Math.floor(Math.random() * LAST_WORDS.length)];
         player.lastWordAlpha = 1.0;
         player.lastWordY = -PH;
-
-        const blameDisplay = document.getElementById('blame-display');
-        if (blameDisplay) {
-            blameDisplay.textContent = `Reason: ${getBlameReason()}`;
-            blameDisplay.classList.remove('show');
-            void blameDisplay.offsetWidth;
-            blameDisplay.classList.add('show');
-        }
 
         flashOverlay.classList.add('flash');
         setTimeout(() => flashOverlay.classList.remove('flash'), 100);
