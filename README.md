@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="./Assets/anson.title.png" width="420"/>
+  <img src="./Assets/anson_title.png" width="420"/>
 </p>
 
 ---
