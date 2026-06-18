@@ -444,11 +444,7 @@
         ctx.rotate(player.rotation * Math.PI / 180);
         ctx.scale(player.scaleX, player.scaleY);
 
-        // Drop shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 5;
+        // Drop shadow removed for ultra mobile performance
 
         // Draw CROPPED sprite (removes transparent padding)
         drawCroppedSprite(
@@ -792,10 +788,9 @@
     }
 
     function drawClouds() {
+        ctx.fillStyle = '#fff';
         clouds.forEach(c => {
-            ctx.save();
             ctx.globalAlpha = c.opacity;
-            ctx.fillStyle = '#fff';
             ctx.beginPath();
             ctx.ellipse(c.x, c.y, c.w / 2, c.h / 2, 0, 0, Math.PI * 2);
             ctx.fill();
@@ -805,8 +800,8 @@
             ctx.beginPath();
             ctx.ellipse(c.x + c.w * 0.17, c.y + 2, c.w * 0.23, c.h * 0.28, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.restore();
         });
+        ctx.globalAlpha = 1.0;
     }
 
     // ========================
