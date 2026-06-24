@@ -27,11 +27,8 @@
     };
 
     // ========================
-    // ========================
     // GAME CONFIG (% of virtual screen)
     // ========================
-    const isMobile = window.innerWidth <= 768;
-
     const CONFIG = {
         // Physics (tuned for Flappy Bird feel)
         GRAVITY: 0.30,
@@ -55,7 +52,7 @@
         TOWER_OVERLAP: 26,
 
         // Gap size remains constant
-        GAP_BASE: isMobile ? BASE_H * 0.20 : BASE_H * 0.25,    // 160
+        GAP_BASE: BASE_H * 0.25,    // 160
         GAP_VARIANCE: BASE_H * 0.02, // 12.8
         
         // Spawn zones and ground use dynamic VIRTUAL_H so they adapt to tall screens
@@ -67,10 +64,10 @@
         get GROUND_Y() { return VIRTUAL_H - this.GROUND_H; },
 
         // Towers movement
-        TOWER_SPEED_BASE: isMobile ? 3.0 : 2.6,
-        TOWER_SPEED_INCREMENT: isMobile ? 0.025 : 0.02,
-        TOWER_SPEED_MAX: isMobile ? 5.0 : 4.5,
-        TOWER_SPAWN_INTERVAL: isMobile ? 70 : 85,     // frames between spawns
+        TOWER_SPEED_BASE: 2.6,
+        TOWER_SPEED_INCREMENT: 0.02,
+        TOWER_SPEED_MAX: 4.5,
+        TOWER_SPAWN_INTERVAL: 85,     // frames between spawns
 
         // Background
         BG_SCROLL_SPEED: 0.5,
@@ -85,6 +82,29 @@
     };
 
     // ========================
+    // MOBILE DETECTION + HARDER CONFIG
+    // ========================
+    const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                     || ('ontouchstart' in window && window.innerWidth < 900);
+
+    if (isMobile) {
+        // Narrower gap — makes it significantly harder
+        CONFIG.GAP_BASE = BASE_H * 0.21;       // 134 vs 160
+        CONFIG.GAP_VARIANCE = BASE_H * 0.01;   // 6.4 vs 12.8
+
+        // Faster base speed
+        CONFIG.TOWER_SPEED_BASE = 3.0;          // 3.0 vs 2.6
+        CONFIG.TOWER_SPEED_INCREMENT = 0.025;   // ramps faster
+        CONFIG.TOWER_SPEED_MAX = 5.2;           // 5.2 vs 4.5
+
+        // Towers come slightly more frequently
+        CONFIG.TOWER_SPAWN_INTERVAL = 75;       // 75 vs 85
+
+        // Background scrolls faster to match
+        CONFIG.BG_SCROLL_SPEED = 0.65;
+    }
+
+    // ========================
     // GAME STATE
     // ========================
     const STATES = { MENU: 0, GET_READY: 1, PLAYING: 2, GAME_OVER: 3, FROZEN: -1 };
@@ -93,6 +113,7 @@
     let score = 0;
     let highScore = parseInt(localStorage.getItem('ansonParakkuu_highScore')) || 0;
     let isNewBest = false;
+    const isBot = window.location.hash.includes('bot') || new URLSearchParams(window.location.search).get('bot') === 'true'; // Auto-play if in iframe
 
     // Day/Night cycle
     let nightAlpha = 0;
@@ -134,11 +155,12 @@
     const ctx = canvas.getContext('2d');
 
     let screenW, screenH, scale;
-    let dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resizeGame() {
-        const wW = window.innerWidth;
-        const wH = window.innerHeight;
+        const wrapper = document.getElementById('game-wrapper');
+        const wW = wrapper.clientWidth;
+        const wH = wrapper.clientHeight;
 
         let aspect = wW / wH;
         // Clamp aspect ratio so desktop doesn't get too squished. Max width is 9:16
@@ -170,6 +192,62 @@
 
     window.addEventListener('resize', resizeGame);
     resizeGame();
+
+    // ========================
+    // SOUND EFFECTS (Zero-Lag Web Audio API)
+    // ========================
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    const sfxBuffers = {};
+
+    async function loadAudioBuffer(name, url) {
+        try {
+            const response = await fetch(url);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+            sfxBuffers[name] = audioBuffer;
+        } catch (e) {
+            console.warn('Failed to load audio:', name, e);
+        }
+    }
+
+    loadAudioBuffer('jump', 'Assets/sfx/faah 1.mpeg');
+    loadAudioBuffer('score', 'Assets/sfx/faah 2.mpeg');
+    loadAudioBuffer('death', 'Assets/sfx/gwak anson.mpeg');
+
+    // Auto-enable audio context on any user interaction
+    const resumeAudio = () => { if (audioCtx.state === 'suspended') audioCtx.resume(); };
+    document.addEventListener('pointerdown', resumeAudio, { passive: true });
+    document.addEventListener('keydown', resumeAudio, { passive: true });
+
+    function playSound(name) {
+        if (!sfxBuffers[name]) return null;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const source = audioCtx.createBufferSource();
+        source.buffer = sfxBuffers[name];
+        source.connect(audioCtx.destination);
+        source.start(0);
+        return source;
+    }
+
+    let deathSoundPlayCount = 0;
+    let currentDeathAudio = null;
+    let deathLoopTimer = null;
+
+    function playDeathLoop() {
+        if (state !== STATES.GAME_OVER && state !== STATES.FROZEN) return;
+        if (deathSoundPlayCount >= 20) return;
+        
+        currentDeathAudio = playSound('death');
+        deathSoundPlayCount++;
+
+        let delay = 100; // Fallback if duration isn't fully loaded
+        if (sfxBuffers['death'] && sfxBuffers['death'].duration > 0.1) {
+            delay = (sfxBuffers['death'].duration - 0.1) * 1000;
+        }
+        
+        deathLoopTimer = setTimeout(playDeathLoop, delay);
+    }
 
     // ========================
     // ASSET LOADING
@@ -352,6 +430,7 @@
     }
 
     function flap() {
+        playSound('jump');
         const now = performance.now();
         if (now - lastFlapTime < 400) recentFlapCount++;
         else recentFlapCount = 1;
@@ -444,7 +523,11 @@
         ctx.rotate(player.rotation * Math.PI / 180);
         ctx.scale(player.scaleX, player.scaleY);
 
-        // Drop shadow removed for ultra mobile performance
+        // Drop shadow
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 5;
 
         // Draw CROPPED sprite (removes transparent padding)
         drawCroppedSprite(
@@ -671,6 +754,7 @@
 
     function addScore() {
         score++;
+        playSound('score');
         scoreDisplay.textContent = score;
         scoreDisplay.classList.remove('pop');
         void scoreDisplay.offsetWidth;
@@ -788,9 +872,10 @@
     }
 
     function drawClouds() {
-        ctx.fillStyle = '#fff';
         clouds.forEach(c => {
+            ctx.save();
             ctx.globalAlpha = c.opacity;
+            ctx.fillStyle = '#fff';
             ctx.beginPath();
             ctx.ellipse(c.x, c.y, c.w / 2, c.h / 2, 0, 0, Math.PI * 2);
             ctx.fill();
@@ -800,8 +885,8 @@
             ctx.beginPath();
             ctx.ellipse(c.x + c.w * 0.17, c.y + 2, c.w * 0.23, c.h * 0.28, 0, 0, Math.PI * 2);
             ctx.fill();
+            ctx.restore();
         });
-        ctx.globalAlpha = 1.0;
     }
 
     // ========================
@@ -872,6 +957,9 @@
 
     function triggerGameOver(type) {
         if (state !== STATES.PLAYING) return;
+        state = STATES.FROZEN;
+        deathSoundPlayCount = 0;
+        playDeathLoop();
         lastDeathType = type || 'general';
         triggerVibration('death');
 
@@ -894,7 +982,6 @@
         }
 
         setTimeout(() => setState(STATES.GAME_OVER), 1000); // More time to see the yeet
-        state = STATES.FROZEN;
     }
 
     const ROASTS = {
@@ -1041,17 +1128,36 @@
     // ========================
     let inputLocked = false;
 
+    function stopDeathAudio() {
+        if (deathLoopTimer) {
+            clearTimeout(deathLoopTimer);
+            deathLoopTimer = null;
+        }
+        if (currentDeathAudio) {
+            currentDeathAudio.stop();
+            currentDeathAudio = null;
+        }
+    }
+
     function handleInput(e) {
         if (e) e.preventDefault();
         if (inputLocked) return;
 
         switch (state) {
+            case STATES.MENU:
+                stopDeathAudio();
+                setState(STATES.GET_READY);
+                break;
             case STATES.GET_READY:
                 setState(STATES.PLAYING);
                 flap();
                 break;
             case STATES.PLAYING:
                 flap();
+                break;
+            case STATES.GAME_OVER:
+                stopDeathAudio();
+                setState(STATES.GET_READY);
                 break;
         }
     }
@@ -1072,13 +1178,20 @@
         btn.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); btn.blur(); action(); });
     }
 
-    addButtonListeners(btnPlay, () => setState(STATES.GET_READY));
+    addButtonListeners(btnPlay, () => {
+        stopDeathAudio();
+        setState(STATES.GET_READY);
+    });
     addButtonListeners(btnRetry, () => {
+        stopDeathAudio();
         inputLocked = true;
         setState(STATES.GET_READY);
         setTimeout(() => { inputLocked = false; }, 300);
     });
-    addButtonListeners(btnHome, () => setState(STATES.MENU));
+    addButtonListeners(btnHome, () => {
+        stopDeathAudio();
+        window.location.href = 'index.html';
+    });
 
     // ========================
     // IDLE ANIMATION
@@ -1183,6 +1296,33 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
 
+        // BOT MODE AI (Auto-Fly)
+        // ========================
+        if (isBot) {
+            if (state === STATES.MENU) {
+                setState(STATES.GET_READY);
+            } else if (state === STATES.GET_READY) {
+                setState(STATES.PLAYING);
+                flap();
+            } else if (state === STATES.PLAYING) {
+                // Simple AI: Find next tower and flap to go through it
+                const nextTower = towers.find(t => t.x + CONFIG.TOWER_W > player.x);
+                let targetY = CONFIG.GROUND_Y / 2; // Default flight path
+                if (nextTower) {
+                    // Aim slightly above the bottom pipe to allow for gravity arc
+                    targetY = nextTower.bottomStart - 50; 
+                }
+
+                if (player.y > targetY && player.vy >= 0) {
+                    flap();
+                }
+            } else if (state === STATES.GAME_OVER) {
+                // Instantly restart bot
+                stopDeathAudio();
+                setState(STATES.GET_READY);
+            }
+        }
+
         // UPDATE
         updateBackground();
         updateClouds();
@@ -1226,8 +1366,14 @@
         // --- NIGHT LIGHTING OVERLAY ---
         nightAlpha += (targetNightAlpha - nightAlpha) * 0.015;
         if (nightAlpha > 0.01) {
-            // Fast mobile-friendly night mode
-            ctx.fillStyle = `rgba(10, 15, 40, ${nightAlpha * 0.5})`;
+            // Darken everything heavily (simulates loss of sunlight)
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = `rgba(10, 15, 30, ${nightAlpha * 0.8})`;
+            ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
+            
+            // Add a blue moonlight tint over everything
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = `rgba(20, 30, 80, ${nightAlpha * 0.35})`;
             ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
         }
 

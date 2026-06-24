@@ -28,6 +28,63 @@ html, body {
     background: #0a0a0f;
 }
 
+/* ===== FLOATING FULLSCREEN BUTTON ===== */
+.btn-fullscreen-floating {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.btn-fullscreen-floating:hover {
+    background: rgba(255, 59, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+}
+
+.btn-fullscreen-floating:active {
+    transform: scale(0.95);
+}
+
+.fullscreen-hint {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn-fullscreen-floating:hover + .fullscreen-hint {
+    opacity: 1;
+}
+
+/* Fullscreen button is now visible on all devices */
+
+:fullscreen .btn-fullscreen-floating, :-webkit-full-screen .btn-fullscreen-floating {
+    opacity: 0.3;
+}
+:fullscreen .btn-fullscreen-floating:hover, :-webkit-full-screen .btn-fullscreen-floating:hover {
+    opacity: 1;
+}
+
 /* ===== GAME CONTAINER — strict 9:16 ===== */
 #game-container {
     position: relative;
