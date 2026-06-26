@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Anson Parakkuu - The most hilarious flying game. Fly through obstacles, avoid the Bharatgas cylinders, and try not to get roasted!">
+    <title>Anson Parakkuu | Fly Through The Danger</title>
+    <link rel="icon" type="image/png" href="Assets/anson-title.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+
+    <!-- 1. Cinematic Preloader -->
+    <div id="preloader">
+        <div class="preloader-grid"></div>
+        <div class="preloader-particles">
+            <div class="particle p1"></div>
+            <div class="particle p2"></div>
+            <div class="particle p3"></div>
+            <div class="particle p4"></div>
+        </div>
+
+        <div class="preloader-content">
+            <div class="preloader-char-container">
+                <div class="char-aura"></div>
+                <img src="Assets/anson smile.png" alt="Loading Character" class="preloader-char">
+            </div>
+            
+            <div class="preloader-brand">
+                <h1 class="preloader-title" data-text="ANSON PARAKKUU">ANSON PARAKKUU</h1>
+                <p class="preloader-subtitle">INITIALIZING COMEDY PHYSICS...</p>
+            </div>
+            
+            <div class="loading-bar-container">
+                <div class="loading-bar">
+                    <div class="loading-progress">
+                        <div class="loading-glow-tip"></div>
+                    </div>
+                </div>
+                <div class="loading-percentage">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Orbs for Parallax / Glow -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <main class="landing-content">
+        
+        <!-- Hero Section -->
+        <section class="hero-section fade-up">
+            <div class="hero-text-content">
+                <img src="Assets/anson-title.png" alt="Anson Parakkuu" class="hero-title-img hover-interaction hover-sound">
+                <h1 class="hero-headline">Discover The Most Hilarious Flying Game.</h1>
+                <p class="hero-subline">Fly through tricky obstacles, dodge the legendary Bharatgas cylinders, and brace yourself for the ultimate roast when you crash.</p>
+                <div class="hero-actions">
+                    <a href="/play" class="btn-primary play-btn hover-sound">Play Now</a>
+                    <a href="#features" class="btn-secondary hover-sound">Learn More &rarr;</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-glow"></div>
+                <img src="Assets/anson happy.png" alt="Anson Happy" class="floating-hero hover-interaction">
+            </div>
+        </section>
+
+        <!-- Gameplay Preview Section -->
+        <section id="preview" class="preview-section fade-up">
+            <div class="section-header">
+                <h2 class="section-title">See How It Works.</h2>
+                <p class="section-desc">It looks simple, but the comedy physics will catch you off guard.</p>
+            </div>
+            <div class="preview-content">
+                <div class="preview-video-container" id="video-loop-container">
+                    <video class="preview-video active" src="Assets/anson video.mp4" muted playsinline preload="auto"></video>
+                    <video class="preview-video" src="Assets/anson video.mp4" muted playsinline preload="auto"></video>
+                    <div class="preview-overlay"></div>
+                </div>
+                <div class="preview-text-wrapper">
+                    <div class="mobile-swipe-hint">Swipe to explore &rarr;</div>
+                <div class="preview-features">
+                    <div class="feature-card hover-sound">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                                <rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect>
+                                <path d="M12 12h.01"></path>
+                                <path d="M17 12h.01"></path>
+                                <path d="M7 12h.01"></path>
+                            </svg>
+                        </div>
+                        <h3>Tap to Fly</h3>
+                        <p>Simple one-touch controls. Use Spacebar, Mouse, or Touch to keep Anson in the air.</p>
+                    </div>
+                    <div class="feature-card hover-sound">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <path d="M12 2v2"></path>
+                                <path d="M12 20v2"></path>
+                                <path d="M4.93 4.93l1.41 1.41"></path>
+                                <path d="M17.66 17.66l1.41 1.41"></path>
+                                <path d="M2 12h2"></path>
+                                <path d="M20 12h2"></path>
+                                <path d="M6.34 17.66l-1.41 1.41"></path>
+                                <path d="M19.07 4.93l-1.41 1.41"></path>
+                            </svg>
+                        </div>
+                        <h3>Dynamic Worlds</h3>
+                        <p>The sky shifts from day to night in real-time as your high score increases.</p>
+                    </div>
+                    <div class="feature-card hover-sound">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                        <h3>The Blame Game</h3>
+                        <p>Crash? Get roasted. The game knows exactly why you failed and won't let you forget it.</p>
+                    </div>
+                </div>
+                <a href="/play" class="btn-outline play-btn hover-sound mt-4 cta-breakout">Try the Game</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Character Showcase Section -->
+        <section id="characters" class="characters-section fade-up">
+            <div class="section-header center">
+                <span class="badge">Cast</span>
+                <h2 class="section-title">Meet The Expressions.</h2>
+                <p class="section-desc">Every mood meticulously captured in high definition.</p>
+            </div>
+            
+            <div class="character-grid">
+                <div class="char-card hover-interaction hover-sound">
+                    <div class="char-bg bg-green"></div>
+                    <img src="Assets/anson smile.png" alt="Anson Smile" class="char-img">
+                    <div class="char-info">
+                        <h4>The Confident</h4>
+                        <p>Ready to fly</p>
+                    </div>
+                </div>
+                <div class="char-card hover-interaction hover-sound">
+                    <div class="char-bg bg-red"></div>
+                    <img src="Assets/anson hit.png" alt="Anson Hit" class="char-img">
+                    <div class="char-info">
+                        <h4>The Regret</h4>
+                        <p>Right after impact</p>
+                    </div>
+                </div>
+                <div class="char-card hover-interaction hover-sound">
+                    <div class="char-bg bg-purple"></div>
+                    <img src="Assets/anson lip.png" alt="Anson Lip" class="char-img">
+                    <div class="char-info">
+                        <h4>The Focus</h4>
+                        <p>Extreme concentration</p>
+                    </div>
+                </div>
+                <div class="char-card hover-interaction hover-sound">
+                    <div class="char-bg bg-blue"></div>
+                    <img src="Assets/anson mouth.png" alt="Anson Mouth" class="char-img">
+                    <div class="char-info">
+                        <h4>The Panic</h4>
+                        <p>Falling too fast</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- SEO / About Section -->
+        <section id="features" class="seo-section fade-up">
+            <div class="mobile-swipe-hint">Swipe to explore &rarr;</div>
+            <div class="seo-container">
+                <!-- Card 1 -->
+                <div class="seo-block">
+                    <h2>
+                        <svg class="anim-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" ry="2"></rect><circle cx="16" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><path d="M6 12h4"></path><path d="M8 10v4"></path></svg>
+                        Play Anson Fly Online
+                    </h2>
+                    <p>To play this tap to fly game, simply click or tap the screen to make Anson jump. You can also use the Spacebar on your keyboard, or the 'A' button and Right Trigger (RT) on an Xbox Controller. It's an easy to learn, yet hard to master mobile web game that will test your reflexes!</p>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="seo-block">
+                    <h2>
+                        <svg class="anim-wiggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                        Funny Flappy Bird Style
+                    </h2>
+                    <p>Unlike a traditional flappy bird clone, this funny game features a dynamic comedy system! When you crash into the Bharatgas cylinder towers, the game will roast you with hilarious excuses based on exactly how you failed. Did you panic tap? Did you miss by a single pixel? The game knows!</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="seo-block">
+                    <h2>
+                        <svg class="anim-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Features
+                    </h2>
+                    <ul>
+                        <li>Responsive 9:16 gameplay container optimized for mobile and desktop.</li>
+                        <li>Dynamic day and night cycle that shifts as your score increases.</li>
+                        <li>Context-aware blame system that makes fun of your crashes!</li>
+                        <li>Full native Gamepad support with analog flap physics and dual-rumble vibrations.</li>
+                    </ul>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="seo-block">
+                    <h2>
+                        <svg class="anim-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        Why This Game is Funny
+                    </h2>
+                    <p>Every time you play game online with Anson, you're guaranteed a laugh. The physics are perfectly tuned to feel like a meme flying game, with a massive "yeet" effect when you hit a pipe, sending Anson spinning wildly out of control while floating text displays his comedic last words.</p>
+                </div>
+            </div>
+        </section>
+        <!-- Final CTA Section -->
+        <section class="cta-section fade-up">
+            <div class="cta-container">
+                <h2 class="cta-headline">Ready to Play?</h2>
+                <p class="cta-subline">Stop reading and start flapping. The Bharatgas towers are waiting for you.</p>
+                <a href="/play" class="btn-primary massive play-btn hover-sound">Start Playing Now</a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Anson Parakkuu</h3>
+                <p>The most hilarious flying game on the web.</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-col">
+                    <h4>Explore</h4>
+                    <a href="#preview">Gameplay</a>
+                    <a href="#characters">Characters</a>
+                </div>
+                <div class="link-col">
+                    <h4>INFIDEVS</h4>
+                    <a href="https://infidevs.in" target="_blank" rel="noopener noreferrer">infidevs.in</a>
+                    <a href="https://github.com/stevoux" target="_blank" rel="noopener noreferrer" style="font-weight: 600;">stevoux</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 STEVOUX. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Audio Assets for Landing Page UI -->
+    <script src="landing.js"></script>
+</body>
+</html>
